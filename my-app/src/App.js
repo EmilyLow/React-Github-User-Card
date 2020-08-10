@@ -15,8 +15,9 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      mainUser: "tetondan",
-      gitUsers: []
+      pullName: "tetondan",
+      mainUser: {},
+      followers: []
     };
   }
 
@@ -25,31 +26,32 @@ class App extends React.Component {
     //Get main user
     //Okay this is functional, maybe, but its doing weird array within array stuff
     axios
-      .get("https://api.github.com/users/" + this.state.mainUser)
+      .get("https://api.github.com/users/" + this.state.pullName)
       .then((res) => {
         console.log("Main user pulled");
         console.log("main user,", res.data);
         this.setState({
-          gitUsers: [...this.state.gitUsers, res.data]
+         mainUser: res.data
         })
         console.log("state main user", this.state);
-         //Get followers
-          axios
-        .get("https://api.github.com/users/" + this.state.mainUser + "/followers")
-        .then((res) => {
-          console.log("Users pulled");
-          console.log(res);
-          this.setState({
-            gitUsers: this.state.gitUsers.concat(res.data)
-          })
-          console.log("state all", this.state);
-        })
-        .catch((err) => console.log(err));
         
       
       })
       .catch((err) => console.log(err));
 
+      //Get followeres
+
+      axios
+        .get("https://api.github.com/users/" + this.state.pullName + "/followers")
+        .then((res) => {
+          console.log("Users pulled");
+          console.log(res.data);
+          this.setState({
+            followers: res.data
+          })
+          console.log("state all", this.state);
+        })
+        .catch((err) => console.log(err));
    
     
     
@@ -58,7 +60,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <UserList gitUsers = {this.state.gitUsers}/>
+        <UserList followers = {this.state.followers} mainUser = {this.state.mainUser}/>
       </div>
     );
   };
